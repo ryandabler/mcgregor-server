@@ -4,6 +4,7 @@
   "description": "Server for the McGregor app",
   "main": "server.js",
   "scripts": {
+    "start": "node ./src/server.js",
     "test": "mocha --exit"
   },
   "author": "Ryan Dabler",
