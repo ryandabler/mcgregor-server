@@ -12,12 +12,15 @@ const morgan   = require("morgan");
 
 const app = express();
 const { PORT, DATABASE_URL } = require("./config");
-const { userRouter } = require("./routes");
+const { userRouter, authRouter } = require("./routes");
+const { localStrategy, jwtStrategy } = require("./strategies");
 
 ////////////////////////////
 // Set up application
 ////////////////////////////
 app.use(express.static("public"));
+passport.use(localStrategy);
+passport.use(jwtStrategy);
 
 // CORS
 app.use(function(req, res, next) {
@@ -32,6 +35,7 @@ app.use(morgan("common"));
 
 // Routes
 app.use("/api/users", userRouter);
+app.use("/api/auth", authRouter);
 
 // Error handling
 app.use((err, req, res, next) => {
