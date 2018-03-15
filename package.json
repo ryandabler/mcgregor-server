@@ -8,6 +8,7 @@
     "test": "mocha --exit"
   },
   "author": "Ryan Dabler",
+  "license": "LicenseRef-LICENSE",
   "dependencies": {
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
