@@ -13,7 +13,8 @@ const userSchema = mongoose.Schema({
 // Instance methods
 userSchema.methods.serialize = function() {
     return {
-        username: this.username
+        username: this.username,
+        email: this.email
     };
 }
 
