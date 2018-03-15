@@ -12,6 +12,7 @@ const morgan   = require("morgan");
 
 const app = express();
 const { PORT, DATABASE_URL } = require("./config");
+const { userRouter } = require("./routes");
 
 ////////////////////////////
 // Set up application
@@ -30,9 +31,7 @@ app.use(function(req, res, next) {
 app.use(morgan("common"));
 
 // Routes
-app.get('/api/*', (req, res) => {
-    res.json({ok: true});
-});
+app.use("/api/users", userRouter);
 
 // Error handling
 app.use((err, req, res, next) => {
