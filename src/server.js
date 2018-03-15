@@ -7,6 +7,7 @@ require("dotenv").config();
 
 const express  = require('express');
 const mongoose = require("mongoose");
+const passport = require("passport");
 
 const app = express();
 const { PORT, DATABASE_URL } = require("./config");
