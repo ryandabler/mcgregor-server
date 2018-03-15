@@ -1,4 +1,4 @@
-function doesNotExist(model, field) {
+function ensureDoesNotExist(model, field) {
     return (req, res, next) => {
         const queryDoc = {};
         queryDoc[field] = req.body[field];
@@ -15,4 +15,4 @@ function doesNotExist(model, field) {
     }
 }
 
-module.exports = { doesNotExist };
+module.exports = { ensureDoesNotExist };
