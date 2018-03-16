@@ -12,7 +12,7 @@ const cropSchema = mongoose.Schema({
     planting_depth: Number,
     row_spacing: Number,
     seed_spacing: Number,
-    garden: { type: mongoose.Schema.Types.ObjectId, required: true }
+    gardenId: { type: mongoose.Schema.Types.ObjectId, required: true }
 });
 
 // Instance methods
