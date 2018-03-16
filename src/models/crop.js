@@ -18,6 +18,7 @@ const cropSchema = mongoose.Schema({
 // Instance methods
 cropSchema.methods.serialize = function() {
     return {
+        id: this._id,
         name: this.name,
         variety: this.variety,
         plant_date: this.plant_date,
