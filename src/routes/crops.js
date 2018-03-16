@@ -42,7 +42,7 @@ router.post(
     "/",
     jsonParser,
     checkRequiredFields(["name", "variety", "plant_date", "germination_days", 
-        "harvest_days", "gardenId"]),
+        "harvest_days", "userId"]),
     (req, res) => {
         const {
             name,
@@ -53,7 +53,7 @@ router.post(
             planting_depth,
             row_spacing,
             seed_spacing,
-            gardenId
+            userId
         } = req.body;
 
         Crop.create({
@@ -65,7 +65,7 @@ router.post(
             planting_depth,
             row_spacing,
             seed_spacing,
-            gardenId
+            userId
         })
             .then(crop => res.status(201).json(crop.serialize()))
             .catch(err => {
