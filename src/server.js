@@ -12,7 +12,7 @@ const morgan   = require("morgan");
 
 const app = express();
 const { PORT, DATABASE_URL } = require("./config");
-const { userRouter, authRouter, cropRouter } = require("./routes");
+const { userRouter, authRouter, cropRouter, journalRouter } = require("./routes");
 const { localStrategy, jwtStrategy } = require("./strategies");
 
 ////////////////////////////
@@ -37,6 +37,7 @@ app.use(morgan("common"));
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/crops", cropRouter);
+app.use("/api/journal", journalRouter);
 
 // Error handling
 app.use((err, req, res, next) => {
