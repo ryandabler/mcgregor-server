@@ -5,6 +5,7 @@
 ////////////////////////////
 const router     = require("express").Router();
 const jsonParser = require("body-parser").json();
+const jwtAuth    = require("passport").authenticate("jwt", { session: false } );
 const { User }   = require("../models");
 const {
     checkRequiredFields,
@@ -16,6 +17,20 @@ const {
 ////////////////////////////
 // Routes
 ////////////////////////////
+router.get(
+    "/:id",
+    jwtAuth,
+    (req, res) => {
+        const { id } = req.user;
+        User.findAndPopulate(id)
+            .then(user => res.json( { users: user.populatedSerialize() } ))
+            .catch(err => {
+                console.error(err);
+                res.status(500).json( { message: "Internal server error" } );
+            });
+    }
+);
+
 router.post(
     "/",
     jsonParser,
