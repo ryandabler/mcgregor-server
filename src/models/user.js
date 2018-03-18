@@ -10,6 +10,12 @@ const userSchema = mongoose.Schema({
     password: { type: String, required: true }
 });
 
+userSchema.virtual("crops", {
+    ref: "Crop",
+    localField: "_id",
+    foreignField: "userId"
+});
+
 // Instance methods
 userSchema.methods.serialize = function() {
     return {
