@@ -6,7 +6,8 @@ const mongoose = require("mongoose");
 const journalSchema = mongoose.Schema({
     date: { type: Date, required: true },
     scope: { type: mongoose.Schema.Types.ObjectId, required: true },
-    text: { type: String, required: true }
+    text: { type: String, required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, required: true }
 });
 
 // Instance methods
