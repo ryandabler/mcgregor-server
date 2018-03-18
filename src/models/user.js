@@ -25,6 +25,15 @@ userSchema.methods.serialize = function() {
     };
 }
 
+userSchema.methods.populatedSerialize = function() {
+    return {
+        id: this._id,
+        username: this.username,
+        email: this.email,
+        crops: this.crops
+    };
+}
+
 userSchema.methods.validatePassword = function(password) {
     return bcrypt.compare(password, this.password);
 }
@@ -33,6 +42,11 @@ userSchema.methods.validatePassword = function(password) {
 userSchema.statics.hashPassword = function(password) {
     return bcrypt.hash(password, 10);
 }
+
+userSchema.statics.findAndPopulate = function(id = null) {
+    return User.findById(id)
+               .populate( { path: "crops" } );
+};
 
 // Model
 const User = mongoose.model("User", userSchema);
