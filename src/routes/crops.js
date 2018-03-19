@@ -36,7 +36,7 @@ router.get(
     (req, res) => {
         const { id } = req.params;
         Crop.find( { _id: id, userId: req.user.id } )
-            .then(crop => {console.log(crop);
+            .then(crop => {
                 res.json( { crops: crop.map(crop => crop.serialize()) } );
             })
             .catch(err => {
