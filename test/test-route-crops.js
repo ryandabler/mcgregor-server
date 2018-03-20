@@ -59,6 +59,7 @@ function tearDownDb() {
 describe("Crops API", function() {
     const { username, password } = TEST_USER;
     const user = { username, password };
+    let authToken;
 
     before(function() {
         console.log("running server");
@@ -85,6 +86,14 @@ describe("Crops API", function() {
             .then(user => {
                 const { _id } = user;
                 return seedCropData(_id);
+            })
+            .then(data => {
+                return chai.request(app)
+                    .post("/api/auth/login")
+                    .send(user);
+            })
+            .then(res => {
+                authToken = res.body.authToken;
             });
     });
     
@@ -100,16 +109,10 @@ describe("Crops API", function() {
         describe("GET method", function() {
             it("Should return all crops of a user", function() {
                 let TEST_USER_count;
-
+                
                 return chai.request(app)
-                    .post("/api/auth/login")
-                    .send(user)
-                    .then(function(res) {
-                        const { authToken } = res.body;
-                        return chai.request(app)
                             .get("/api/crops")
-                            .set("Authorization", `Bearer ${authToken}`);
-                    })
+                            .set("Authorization", `Bearer ${authToken}`)
                     .then(function(res) {
                         expect(res).to.have.status(200);
                         expect(res).to.be.json;
@@ -140,13 +143,6 @@ describe("Crops API", function() {
                     .then(function(_crop) {
                         crop = _crop;
 
-                        return chai.request(app)
-                            .post("/api/auth/login")
-                            .send(user)
-                    })
-                    .then(function(res) {
-                        const { authToken } = res.body;
-                        
                         return chai.request(app)
                             .get(`/api/crops/${crop._id}`)
                             .set("Authorization", `Bearer ${authToken}`)
