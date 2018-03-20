@@ -177,25 +177,15 @@ describe("Crops API", function() {
             });
 
             it("Should not return a crop of another user", function() {
-                let userId, crop;
                 return User.find( { username: { $ne: TEST_USER.username } } )
                     .then(function(_user) {
-                        userId = _user[0]._id;
+                        const userId = _user[0]._id;
 
                         return Crop.findOne( { userId } );
                     })
                     .then(function(_crop) {
-                        crop = _crop;
-
                         return chai.request(app)
-                            .post("/api/auth/login")
-                            .send(user)
-                    })
-                    .then(function(res) {
-                        const { authToken } = res.body;
-                        
-                        return chai.request(app)
-                            .get(`/api/crops/${crop._id}`)
+                            .get(`/api/crops/${_crop._id}`)
                             .set("Authorization", `Bearer ${authToken}`)
                     })
                     .then(function(res) {
