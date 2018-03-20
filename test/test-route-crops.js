@@ -333,7 +333,7 @@ describe("Crops API", function() {
                     })
                     .then(function(crop) {
                         cropId = crop._id;
-                        updatedCrop.id = cropId;
+                        updatedCrop.id = cropId.toString();
 
                         return chai.request(app)
                             .put(`/api/crops/${cropId}`)
