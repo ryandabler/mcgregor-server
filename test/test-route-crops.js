@@ -131,7 +131,7 @@ describe("Crops API", function() {
                         expect(TEST_USER_count).to.be.lessThan(count);
                     });
             });
-
+            
             it("Should return a particular crop of a user", function() {
                 let userId, crop;
                 return User.find( { username: TEST_USER.username } )
@@ -193,6 +193,229 @@ describe("Crops API", function() {
                         expect(res).to.be.json;
                         expect(res.body.crops).to.be.a("array");
                         expect(res.body.crops.length).to.equal(0);
+                    });
+            });
+        });
+
+        describe("POST method", function() {
+            it("Should create a crop", function() {
+                return User.findOne( { username: TEST_USER.username } )
+                    .then(function(user) {
+                        const userId = user._id;
+                        const crop = generateCropData(userId);
+
+                        return chai.request(app)
+                            .post("/api/crops")
+                            .send(crop)
+                            .set("Authorization", `Bearer ${authToken}`);
+                    })
+                    .then(function(res) {
+                        expect(res).to.have.status(201);
+                        expect(res).to.be.json;
+                        expect(res.body).to.be.a("object");
+                        expect(res.body).to.have.keys("id", "name", "variety",
+                            "plant_date", "germination_days", "harvest_days",
+                            "planting_depth", "row_spacing", "seed_spacing");
+                    });
+            });
+
+            it("Should not create a crop without a JWT", function() {
+                return User.findOne( { username: TEST_USER.username } )
+                    .then(function(user) {
+                        const userId = user._id;
+                        const crop = generateCropData(userId);
+
+                        return chai.request(app)
+                            .post("/api/crops")
+                            .send(crop)
+                    })
+                    .catch(function(err) {
+                        expect(err.response).to.have.status(401);
+                        expect(err.response.text).to.equal("Unauthorized");
+                    });
+            });
+        });
+
+        describe("DELETE method", function() {
+            it("Should delete a crop", function() {
+                let cropId;
+
+                return User.findOne( { username: TEST_USER.username } )
+                    .then(function(user) {
+                        const userId = user._id;
+
+                        return Crop.findOne( { userId } )
+                    })
+                    .then(function(crop) {
+                        cropId = crop._id;
+                        return chai.request(app)
+                            .delete(`/api/crops/${cropId}`)
+                            .set("Authorization", `Bearer ${authToken}`);
+                    })
+                    .then(function(res) {
+                        expect(res).to.have.status(204);
+                        expect(res.body).to.be.a("object");
+                        expect(res.body).to.be.empty;
+
+                        return Crop.findById(cropId);
+                    })
+                    .then(function(crop) {
+                        expect(crop).to.be.null;
+                    });
+            });
+
+            it("Should not delete a crop without a JWT", function() {
+                let cropId;
+
+                return User.findOne( { username: TEST_USER.username } )
+                    .then(function(user) {
+                        const userId = user._id;
+
+                        return Crop.findOne( { userId } )
+                    })
+                    .then(function(crop) {
+                        cropId = crop._id;
+                        return chai.request(app)
+                            .delete(`/api/crops/${cropId}`);
+                    })
+                    .catch(function(err) {
+                        expect(err.response).to.have.status(401);
+                        expect(err.response.text).to.equal("Unauthorized");
+
+                        return Crop.findById(cropId);
+                    })
+                    .then(function(crop) {
+                        expect(crop).to.not.be.null;
+                    });
+            });
+
+            it("Should not delete another user's crop", function() {
+                let cropId;
+
+                return User.findOne( { username: { $ne: TEST_USER.username } } )
+                    .then(function(user) {
+                        const userId = user._id;
+
+                        return Crop.findOne( { userId } )
+                    })
+                    .then(function(crop) {
+                        cropId = crop._id;
+                        return chai.request(app)
+                            .delete(`/api/crops/${cropId}`)
+                            .set("Authorization", `Bearer ${authToken}`);
+                    })
+                    .then(function(res) {
+                        expect(res).to.have.status(204);
+                        expect(res.body).to.be.a("object");
+                        expect(res.body).to.be.empty;
+
+                        return Crop.findById(cropId);
+                    })
+                    .then(function(crop) {
+                        expect(crop).to.not.be.null;
+                    });
+            });
+        });
+
+        describe("PUT method", function() {
+            it("Should edit a crop", function() {
+                const updatedCrop = {
+                    name: "Abacus",
+                    planting_depth: 1.5
+                };
+                let cropId;
+
+                return User.findOne( { username: TEST_USER.username } )
+                    .then(function(user) {
+                        const userId = user._id;
+
+                        return Crop.findOne( { userId } )
+                    })
+                    .then(function(crop) {
+                        cropId = crop._id;
+                        updatedCrop.id = cropId;
+
+                        return chai.request(app)
+                            .put(`/api/crops/${cropId}`)
+                            .send(updatedCrop)
+                            .set("Authorization", `Bearer ${authToken}`);
+                    })
+                    .then(function(res) {
+                        expect(res).to.have.status(200);
+                        expect(res.body).to.be.a("object");
+                        expect(res.body).to.be.empty;
+
+                        return Crop.findById(cropId);
+                    })
+                    .then(function(_crop) {
+                        const crop = _crop.serialize();
+                        expect(crop).to.deep.include(updatedCrop);
+                    });
+            });
+
+            it("Should not edit a crop without a JWT", function() {
+                const updatedCrop = {
+                    name: "Abacus",
+                    planting_depth: 1.5
+                };
+                let origCrop;
+
+                return User.findOne( { username: TEST_USER.username } )
+                    .then(function(user) {
+                        const userId = user._id;
+
+                        return Crop.findOne( { userId } )
+                    })
+                    .then(function(crop) {
+                        origCrop = crop;
+                        updatedCrop.id = origCrop._id;
+
+                        return chai.request(app)
+                            .put(`/api/crops/${origCrop._id}`)
+                            .send(updatedCrop);
+                    })
+                    .catch(function(err) {
+                        expect(err.response).to.have.status(401);
+                        expect(err.response.text).to.equal("Unauthorized");
+
+                        return Crop.findById(origCrop._id);
+                    })
+                    .then(function(_crop) {
+                        expect(_crop).to.deep.equal(origCrop);
+                    });
+            });
+
+            it("Should not edit another user's crop", function() {
+                const updatedCrop = {
+                    name: "Abacus",
+                    planting_depth: 1.5
+                };
+                let origCrop;
+
+                return User.findOne( { username: { $ne: TEST_USER.username } } )
+                    .then(function(user) {
+                        const userId = user._id;
+
+                        return Crop.findOne( { userId } )
+                    })
+                    .then(function(crop) {
+                        origCrop = crop;
+                        updatedCrop.id = origCrop._id;
+
+                        return chai.request(app)
+                            .put(`/api/crops/${origCrop._id}`)
+                            .send(updatedCrop)
+                            .set("Authorization", `Bearer ${authToken}`);
+                    })
+                    .then(function(res) {
+                        expect(res).to.have.status(200);
+                        expect(res.body).to.be.a("object");
+                        expect(res.body).to.be.empty;
+
+                        return Crop.findById(origCrop._id);
+                    })
+                    .then(function(crop) {
+                        expect(crop).to.deep.equal(origCrop);
                     });
             });
         });
