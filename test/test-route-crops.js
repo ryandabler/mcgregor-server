@@ -36,7 +36,7 @@ function generateCropData(userId) {
         seed_spacing: faker.random.number(),
         userId: userId
     };
-  }
+}
   
 function seedCropData(userId) {
     console.info("seeding crop data");
