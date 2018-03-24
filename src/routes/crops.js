@@ -50,7 +50,7 @@ router.post(
     jwtAuth,
     jsonParser,
     checkRequiredFields(["name", "variety", "plant_date", "germination_days", 
-        "harvest_days", "userId"]),
+        "harvest_days"]),
     (req, res) => {
         const {
             name,
