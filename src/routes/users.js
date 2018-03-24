@@ -18,7 +18,7 @@ const {
 // Routes
 ////////////////////////////
 router.get(
-    "/:id",
+    "/",
     jwtAuth,
     (req, res) => {
         const { id } = req.user;

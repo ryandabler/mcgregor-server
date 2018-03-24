@@ -142,7 +142,7 @@ describe("User API", function() {
                 return User.findOne( { username } )
                     .then(function(user) {
                         return chai.request(app)
-                            .get(`/api/users/${user._id}`)
+                            .get(`/api/users`)
                             .set("Authorization", `Bearer ${authToken}`);
                     })
                     .then(function(res) {
@@ -160,37 +160,11 @@ describe("User API", function() {
                         userId = _user[0]._id;
 
                         return chai.request(app)
-                            .get(`/api/users/${userId}`);
+                            .get(`/api/users`);
                     })
                     .catch(function(err) {
                         expect(err.response).to.have.status(401);
                         expect(err.response.text).to.equal("Unauthorized");
-                    });
-            });
-
-            it("Should not return another user's data", function() {
-                let userResult;
-
-                return User.find( { username } )
-                    .then(function(users) {
-                        return User.findAndPopulate(users[0]._id);
-                    })
-                    .then(function(populatedUser) {
-                        userResult = populatedUser.populatedSerialize();
-
-                        return User.find( { username: { $ne: TEST_USER.username } } );
-                    })
-                    .then(function(otherUser) {
-                        return chai.request(app)
-                            .get(`/api/users/${otherUser._id}`)
-                            .set("Authorization", `Bearer ${authToken}`)
-                    })
-                    .then(function(res) {
-                        expect(res).to.have.status(200);
-                        expect(res).to.be.json;
-                        expect(res.body).to.be.a("object");
-                        expect(res.body.users).to.be.a("object");
-                        expect(res.body.users).to.deep.equal(userResult);
                     });
             });
         });
