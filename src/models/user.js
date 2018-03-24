@@ -16,6 +16,12 @@ userSchema.virtual("crops", {
     foreignField: "userId"
 });
 
+userSchema.virtual("journal", {
+    ref: "Journal",
+    localField: "_id",
+    foreignField: "userId"
+});
+
 // Instance methods
 userSchema.methods.serialize = function() {
     return {
