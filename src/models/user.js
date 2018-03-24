@@ -36,11 +36,14 @@ userSchema.methods.populatedSerialize = function() {
     const crops = this.crops.map(crop => {
         return crop.serialize();
     });
+    const journal = this.journal.map(journal => journal.serialize());
+    
     return {
         id: user._id.toString(),
         username: user.username,
         email: user.email,
-        crops
+        garden: { crops },
+        journal
     };
 }
 
@@ -55,7 +58,8 @@ userSchema.statics.hashPassword = function(password) {
 
 userSchema.statics.findAndPopulate = function(id = null) {
     return User.findById(id)
-               .populate( { path: "crops" } );
+               .populate( { path: "crops" } )
+               .populate( { path: "journal" } );
 };
 
 // Model
