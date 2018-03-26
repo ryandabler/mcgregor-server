@@ -32,6 +32,8 @@ function tearDownDb() {
 // Test suite
 ////////////////////////////
 describe("Authorization API", function() {
+    this.timeout(10000);
+    
     before(function() {
         console.log("running server");
         return runServer(TEST_DATABASE_URL);

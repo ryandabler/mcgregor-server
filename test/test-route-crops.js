@@ -57,6 +57,8 @@ function tearDownDb() {
 // Test suite
 ////////////////////////////
 describe("Crops API", function() {
+    this.timeout(10000);
+    
     const { username, password } = TEST_USER;
     const user = { username, password };
     let authToken;
