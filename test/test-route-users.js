@@ -152,7 +152,7 @@ describe("User API", function() {
                         expect(res).to.be.json;
                         expect(res.body.users).to.be.a("object");
                         expect(res.body.users).to.have.all.keys("id", "username",
-                            "email", "crops");
+                            "email", "garden", "journal");
                     });
             });
             
