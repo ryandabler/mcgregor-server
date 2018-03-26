@@ -49,7 +49,7 @@ router.post(
     "/",
     jwtAuth,
     jsonParser,
-    checkRequiredFields(["date", "scope", "text"]),
+    checkRequiredFields(["date", "text"]),
     (req, res) => {
         const { date, scope, text } = req.body;
         Journal.create( { date, scope, text, userId: req.user.id } )
